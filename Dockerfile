@@ -1,7 +1,9 @@
 # Use Maven to build the application first
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-COPY . .
+COPY pom.xml .
+RUN mvn dependency: go-offline
+COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Use a minimal JDK image for running the app
