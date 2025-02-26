@@ -1,14 +1,20 @@
-# Use Maven to build the application first
-FROM maven:3.8.5-openjdk-17 AS build
-WORKDIR /app
-COPY pom.xml .
-RUN mvn dependency:go-offline
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Use a base image with Java
+FROM eclipse-temurin:17-jdk
 
-# Use a minimal JDK image for running the app
-FROM openjdk:17-jdk-slim
+# Set working directory
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copy the Maven build files and install dependencies
+COPY pom.xml mvnw mvnw.cmd ./
+COPY .mvn .mvn
+RUN ./mvnw dependency:go-offline
+
+# Copy the application source code and build it
+COPY src ./src
+RUN ./mvnw package -DskipTests
+
+# Expose the application port
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+
+# Run the application
+CMD ["java", "-jar", "target/*.jar"]
