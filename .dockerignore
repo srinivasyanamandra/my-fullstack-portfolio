@@ -1,4 +1,4 @@
 target/
-*.md
-*.git
-*.idea
+*.jar
+*.log
+node_modules/

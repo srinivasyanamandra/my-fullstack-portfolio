@@ -1,19 +1,17 @@
-# Use a base image with Java
-FROM eclipse-temurin:17-jdk
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:21-jdk-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy only necessary files for dependency resolution
-COPY pom.xml mvnw ./  
-COPY .mvn .mvn  
-RUN chmod +x mvnw && ./mvnw dependency:go-offline  
+# Copy the project files to the container
+COPY . /app
 
-# Copy the entire project and build it
-COPY src ./src  
-RUN ./mvnw package -DskipTests  
+# Build the application
+RUN ./mvnw package -DskipTests
 
-# Find the built JAR file dynamically and run it
-CMD ["sh", "-c", "java -jar target/*.jar"]
-
+# Expose port 8080
 EXPOSE 8080
+
+# Command to run the application
+CMD ["java", "-jar", "target/CB-0.0.1-SNAPSHOT.jar"]
