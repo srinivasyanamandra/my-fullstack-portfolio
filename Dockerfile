@@ -15,3 +15,5 @@ RUN ./mvnw package -DskipTests
 
 # Find the built JAR file dynamically and run it
 CMD ["sh", "-c", "java -jar target/*.jar"]
+
+EXPOSE 8080
