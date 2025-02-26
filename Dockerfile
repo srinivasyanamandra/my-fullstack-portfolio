@@ -4,17 +4,14 @@ FROM eclipse-temurin:17-jdk
 # Set working directory
 WORKDIR /app
 
-# Copy the Maven build files and install dependencies
+# Copy only necessary files for dependency resolution
 COPY pom.xml mvnw mvnw.cmd ./
 COPY .mvn .mvn
 RUN ./mvnw dependency:go-offline
 
-# Copy the application source code and build it
-COPY src ./src
+# Copy the entire project and build it
+COPY . .
 RUN ./mvnw package -DskipTests
 
-# Expose the application port
-EXPOSE 8080
-
-# Run the application
-CMD ["java", "-jar", "target/*.jar"]
+# Run the built JAR file
+CMD ["java", "-jar", "target/$(ls target/*.jar | grep -v 'original' | head -n 1)"]
