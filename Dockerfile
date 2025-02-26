@@ -5,13 +5,13 @@ FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy only necessary files for dependency resolution
-COPY pom.xml mvnw mvnw.cmd ./
-COPY .mvn .mvn
-RUN ./mvnw dependency:go-offline
+COPY pom.xml mvnw ./  
+COPY .mvn .mvn  
+RUN chmod +x mvnw && ./mvnw dependency:go-offline  
 
 # Copy the entire project and build it
-COPY . .
-RUN ./mvnw package -DskipTests
+COPY src ./src  
+RUN ./mvnw package -DskipTests  
 
-# Run the built JAR file
-CMD ["java", "-jar", "target/$(ls target/*.jar | grep -v 'original' | head -n 1)"]
+# Find the built JAR file dynamically and run it
+CMD ["sh", "-c", "java -jar target/*.jar"]
